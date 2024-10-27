@@ -59,31 +59,31 @@ function deltemp{
 # }
 
 
-function contaRH {
-    # Detectar o idioma do sistema operacional
-    $language = (Get-WinSystemLocale).Name
+# function contaRH {
+#     # Detectar o idioma do sistema operacional
+#     $language = (Get-WinSystemLocale).Name
 
-    net user "FT Consult" ft@redhouse2000! /add;
-    net user "Red House" redhouse@2020 /add;
+#     net user "FT Consult" ft@redhouse2000! /add;
+#     net user "Red House" redhouse@2020 /add;
+#     # Definir os comandos de acordo com o idioma
+#     if ($language -like "pt-BR*") {
+#         # Comandos em português
+#         $addAdminCommand = "net localgroup Administradores 'FT Consult' /add"
+#         $removeUserCommand = "net localgroup Usuários 'FT Consult' /delete"
+#     } else {
+#         # Comandos em inglês
+#         $addAdminCommand = "net localgroup Administrators 'FT Consult' /add"
+#         $removeUserCommand = "net localgroup Users 'FT Consult' /delete"
+#     }
 
-    # Definir os comandos de acordo com o idioma
-    if ($language -like "pt-BR*") {
-        # Comandos em português
-        $addAdminCommand = "net localgroup Administradores 'FT Consult' /add"
-        $removeUserCommand = "net localgroup Usuários 'FT Consult' /delete"
-    } else {
-        # Comandos em inglês
-        $addAdminCommand = "net localgroup Administrators 'FT Consult' /add"
-        $removeUserCommand = "net localgroup Users 'FT Consult' /delete"
-    }
+# # Executar os comandos
+# Invoke-Expression $addAdminCommand
+# Invoke-Expression $removeUserCommand
 
-# Executar os comandos
-Invoke-Expression $addAdminCommand
-Invoke-Expression $removeUserCommand
 
-Write-Output "========================================================================================================================"
-Write-Output "                                                     Usuários criado com sucesso"
-Write-Output "========================================================================================================================"
+# Write-Output "========================================================================================================================"
+# Write-Output "                                                     Usuários criado com sucesso"
+# Write-Output "========================================================================================================================"
 
 Pause
 }
@@ -190,14 +190,60 @@ function appBradesco {
     Pause
 }
 
+function useradminFT{
+    # Define a nova senha como uma string segura
+    $senha = ConvertTo-SecureString -AsPlainText "ft@redhouse2000!" -Force
 
-function menucomlpletoRedHouse {
+    # Obter nome do usuário atual
+    $UserName = (Get-WmiObject -Class Win32_Process -Filter "name = 'explorer.exe'").GetOwner().User
 
-    winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e;
+    # Verificar e alterar nome de usuário e senha
+    if ($UserName -eq "FT Consult") {
+        Rename-LocalUser -Name "FT Consult" -NewName "FTConsult"
+        Set-LocalUser -Name "FTConsult" -Password $senha
+    } elseif ($UserName -eq "FTConsult") {
+        Set-LocalUser -Name "FTConsult" -Password $senha
+    } else {
+        Rename-LocalUser -Name $UserName -NewName "FTConsult"
+        Set-LocalUser -Name "FTConsult" -Password $senha
+    }
 
+    Write-Output "O nome de usuário foi alterado para FTConsult e a senha foi definida. Lembrando que para a alteração fazer efeito você deve sair e entrar novamente do perfil"
 
+    Pause
 
 }
+
+
+function installfull{
+
+    Write-Host "Atualizando Windows..."
+    Get-WindowsUpdate -Install;
+
+    Write-Host "Atualizando atualizações opcionais..."
+    Get-WindowsOptionalFeature -Online | Where-Object {$_.State -eq "Disabled"} | Enable-WindowsOptionalFeature -Online;
+
+    Write-Host "Atualizando aplicativos da Microsoft Store..."
+    (Get-AppxPackage -AllUsers).InstallLocation | Get-ChildItem -Path *.appx | ForEach-Object { Add-AppxPackage -Path $_.FullName -DisableDevelopmentMode -ForceApplicationShutdown };
+
+
+    Write-Host "Atualizando Instalador de Aplicativos da Microsoft..."
+    winget upgrade --all;
+
+    pause
+}
+
+# function menucomlpletoRedHouse {
+#     useradminFT;
+#     Net user 'Red House' redhouse@2020 /add;
+#     winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e;
+
+
+
+
+
+#     Pause
+# }
 function menulux{
     Clear-Host
     Write-Output "" 
@@ -226,13 +272,13 @@ function menulux{
 
 
     switch($resposta3){
-        1{Clear-Host; winget install --id=Python.Python.3.0 -e; winget install --id=Google.Chrome -e;winget install --id=Zoom.Zoom -e; winget install --id=Notepad++.Notepad++ -e; winget install --id=RARLab.WinRAR -e;winget install --id=Microsoft.VisualStudioCode -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=OpenVPNTechnologies.OpenVPN -e;winget install --id=Anaconda.Anaconda3 -e;winget install --id=GoTo.GoTo -e; winget install --id=Microsoft.SQLServerManagementStudio -e; ;winget install --id Microsoft.Todos;appCompareIT}
+        1{Clear-Host; winget install --id=Python.Python.3.0 -e; winget install --id=Google.Chrome -e;winget install --id=Zoom.Zoom -e; winget install --id=Notepad++.Notepad++ -e; winget install --id=RARLab.WinRAR -e;winget install --id=Microsoft.VisualStudioCode -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=OpenVPNTechnologies.OpenVPN -e;winget install --id=Anaconda.Anaconda3 -e;winget install --id=GoTo.GoTo -e; winget install --id=Microsoft.SQLServerManagementStudio -e;winget install --id Microsoft.Todos;appCompareIT}
 
-        2{Clear-Host;winget install --id=Python.Python.3.0 -e;winget install --id=Google.Chrome -e;winget install --id=Microsoft.VisualStudioCode -e;winget install --id=RARLab.WinRAR -e;winget install --id=Mozilla.Firefox -e; ;winget install --id Microsoft.Todos;winget install --id=OpenVPNTechnologies.OpenVPN -e;winget install --id=Microsoft.Teams  -e;winget install --id=GoTo.GoTo -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=Microsoft.PowerBI  -e;winget install --id=Anaconda.Anaconda3 -e;winget install --id=Microsoft.SQLServerManagementStudio -e;appAdolixPDf}
+        2{Clear-Host;winget install --id=Python.Python.3.0 -e;winget install --id=Google.Chrome -e;winget install --id=Microsoft.VisualStudioCode -e;winget install --id=RARLab.WinRAR -e;winget install --id=Mozilla.Firefox -e;winget install --id Microsoft.Todos;winget install --id=OpenVPNTechnologies.OpenVPN -e;winget install --id=Microsoft.Teams  -e;winget install --id=GoTo.GoTo -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=Microsoft.PowerBI  -e;winget install --id=Anaconda.Anaconda3 -e;winget install --id=Microsoft.SQLServerManagementStudio -e;appAdolixPDf}
 
-        3{Clear-Host;winget install --id=Google.Chrome -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=OpenVPNTechnologies.OpenVPN -e; ;winget install --id=GoTo.GoTo -e;winget install --id=Microsoft.SQLServerManagementStudio -e;appItau; appBradesco}
+        3{Clear-Host;winget install --id=Google.Chrome -e;winget install --id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=OpenVPNTechnologies.OpenVPN -e;winget install --id=GoTo.GoTo -e;winget install --id=Microsoft.SQLServerManagementStudio -e;appItau; appBradesco}
 
-        4{Clear-Host;winget install --id=Google.Chrome -e;winget install --id=RARLab.WinRAR -e;winget install --id=GoTo.GoTo -e;winget install --id=Microsoft.SQLServerManagementStudio -e; ;winget install --id=OpenVPNTechnologies.OpenVPN -e;}
+        4{Clear-Host;winget install --id=Google.Chrome -e;winget install --id=RARLab.WinRAR -e;winget install --id=GoTo.GoTo -e;winget install --id=Microsoft.SQLServerManagementStudio -e;winget install --id=OpenVPNTechnologies.OpenVPN -e;}
 
         0{Clear-Host; mainmenu}
     }
@@ -334,9 +380,9 @@ function mainmenu {
 
 
     switch ($resposta) {
-    1 { Clear-Host; winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e; ;}
+    1 { Clear-Host; winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e;}
 	2{clear-host; menuempresas}
-    3 { Clear-Host;  ; winget install --id=Oracle.JavaRuntimeEnvironment  -e; winget install --id=dell.CommandUpdate  -	e; winget install --id=Microsoft.Teams  -e; winget install --id=Mozilla.Firefox -e;winget install --id=Google.Chrome -e;id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=RARLab.WinRAR  -e}
+    3 { Clear-Host; winget install --id=Oracle.JavaRuntimeEnvironment  -e; winget install --id=dell.CommandUpdate  -	e; winget install --id=Microsoft.Teams  -e; winget install --id=Mozilla.Firefox -e;winget install --id=Google.Chrome -e;id=Adobe.Acrobat.Reader.64-bit -e;winget install --id=RARLab.WinRAR  -e}
     4 { Clear-Host; winget upgrade --all}
     5 { Clear-Host; menulux}
     6 { Clear-Host; deltemp}
@@ -344,8 +390,8 @@ function mainmenu {
     8{Clear-Host; rodardism}
     9 { Clear-Host; mrt }
     10{clear-host; menuzmes}
-    11{clear-host; winget install --id=AnyDeskSoftwareGmbH.AnyDesk  -e;winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e; TV; ;}
-    12{clear-host; appBradesco}
+    11{clear-host; winget install --id=AnyDeskSoftwareGmbH.AnyDesk  -e;winget install --id=Google.Chrome -e; winget install --id=Mozilla.Firefox -e; winget install --	id=Adobe.Acrobat.Reader.64-bit -e; winget install --id=Microsoft.Teams -e;}
+    12{clear-host; installfull}
 
         0 { vocetemcerteza }
         default {
